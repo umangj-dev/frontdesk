@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Widget demo — a pretend clinic site</title>
+<meta name="robots" content="noindex" />
+<style>
+  body{font-family:Georgia,serif;background:#faf7f2;color:#1c1a17;margin:0;line-height:1.6}
+  .bar{background:#fff;border-bottom:1px solid #e7e0d6;padding:18px 32px;font-weight:bold;letter-spacing:.5px}
+  .hero{padding:90px 32px;max-width:760px;margin:0 auto;text-align:center}
+  .hero h1{font-size:46px;margin:0 0 16px}
+  .hero p{font-size:19px;color:#6b645a}
+  .note{max-width:600px;margin:0 auto 80px;padding:18px 22px;background:#fff;border:1px solid #e7e0d6;border-radius:12px;font-family:system-ui,sans-serif;font-size:14px;color:#6b645a}
+  .note code{background:#f1ece3;padding:2px 6px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+  <div class="bar">✦ Lumière Aesthetics</div>
+  <div class="hero">
+    <h1>Glow, restored.</h1>
+    <p>This is a pretend clinic website. The FrontDesk chat bubble in the bottom-right corner is the live widget — try asking about prices, hours, or booking.</p>
+  </div>
+  <div class="note">
+    This page only contains one extra line of code:<br><br>
+    <code>&lt;script src="embed.js" data-client="demo-clinic" async&gt;&lt;/script&gt;</code>
+  </div>
+
+  <!-- THE ONE LINE A CLIENT PASTES -->
+  <script src="embed.js" data-client="demo-clinic" async></script>
+</body>
+</html>

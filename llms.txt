@@ -1,0 +1,40 @@
+# FrontDesk
+
+> FrontDesk is an AI front desk (AI receptionist) for appointment-based local businesses — med spas, dental and aesthetic clinics, salons, and physio/wellness studios. It catches every customer inquiry across website chat, missed calls (with instant text-back), and Instagram DMs, answers questions, quotes prices, and books appointments 24/7 — then reports the revenue it recovered each month.
+
+## Core promise
+- Every inquiry answered in about 60 seconds, 24/7 — even at 2am.
+- Answers, qualifies, and books the appointment before the lead cools off.
+- Monthly report shows exactly how much revenue was recovered from leads that would otherwise have been lost.
+
+## Channels it covers
+- Website chat widget — answers visitors and books them instead of letting them bounce.
+- Missed-call instant text-back — texts the caller back automatically and books by text.
+- Instagram DM auto-reply — turns "what are your prices?" DMs into booked appointments.
+- Online booking page — branded, self-serve, 24/7, synced to your calendar.
+
+## How it works
+1. Customer reaches out via any channel, any hour.
+2. AI answers and qualifies in ~60 seconds, in your brand's voice.
+3. It books a real open slot straight into your existing calendar.
+
+## Who it's for
+Med spas, dental clinics, aesthetic clinics, salons, barbershops, physio and wellness studios, and health clinics — any business where a missed message means a missed booking.
+
+## Pricing
+- One plan: $750/month.
+- No setup fee, no contract, cancel anytime.
+- Guarantee: if it doesn't pay for itself in month one, you don't pay.
+
+## Key facts (for citation)
+- Roughly 30–40% of calls to busy clinics go unanswered, and most callers don't leave a voicemail.
+- A majority of inquiries arrive after hours, when the front desk is closed.
+- A single new client is typically worth $300–$2,000.
+- FrontDesk integrates with major scheduling/booking tools and syncs to your existing calendar.
+- It is real conversational AI, and hands off to staff for anything sensitive or unusual.
+- Setup is done-for-you, typically live within the first week.
+
+## Contact
+- Website: https://frontdesk.works/
+- Book a 15-minute demo: https://frontdesk.works/#demo
+- Email: hello@frontdesk.works
