@@ -1,0 +1,64 @@
+:root{
+  --bg:#fff;--bg-2:#f5f5f7;--ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;
+  --line:#d2d2d7;--line-2:#e8e8ed;--teal:#12b39a;--teal-deep:#0a8f7a;--teal-soft:#e6faf5;
+  --maxw:720px;--ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--ink);
+  line-height:1.65;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+a{color:var(--teal-deep);text-decoration:none}a:hover{text-decoration:underline}
+img{display:block;max-width:100%}
+::selection{background:var(--teal);color:#fff}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line-2)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:1080px;margin:0 auto;padding:0 24px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:18px;letter-spacing:-0.02em;color:var(--ink)}
+.logo:hover{text-decoration:none}
+.logo .mk{width:23px;height:23px;border-radius:7px;background:var(--teal);display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.nav-cta{background:var(--teal);color:#fff;font-size:14px;font-weight:500;padding:8px 17px;border-radius:980px}
+.nav-cta:hover{background:var(--teal-deep);text-decoration:none}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+/* article */
+.post{padding:64px 0 40px}
+.post .kicker{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:14px}
+.post h1{font-size:clamp(32px,5vw,46px);font-weight:600;letter-spacing:-0.03em;line-height:1.08;margin-bottom:18px}
+.post .meta{color:var(--ink-3);font-size:14.5px;margin-bottom:8px}
+.post .lede{font-size:20px;color:var(--ink-2);line-height:1.5;margin:22px 0 8px}
+.post-body{font-size:17.5px;color:#2a2a2e}
+.post-body h2{font-size:27px;font-weight:600;letter-spacing:-0.02em;margin:40px 0 14px;line-height:1.2}
+.post-body h3{font-size:20px;font-weight:600;margin:28px 0 10px}
+.post-body p{margin:0 0 18px}
+.post-body ul,.post-body ol{margin:0 0 18px;padding-left:22px}
+.post-body li{margin-bottom:9px}
+.post-body strong{font-weight:600;color:var(--ink)}
+.post-body blockquote{margin:24px 0;padding:16px 22px;border-left:3px solid var(--teal);background:var(--bg-2);border-radius:0 12px 12px 0;color:var(--ink-2);font-size:17px}
+.post-body a{font-weight:500}
+.divider{height:1px;background:var(--line-2);margin:44px 0}
+
+/* callout / CTA */
+.cta-box{background:linear-gradient(180deg,var(--teal-soft),#fff);border:1px solid #cdeee6;border-radius:20px;padding:32px;text-align:center;margin:40px 0}
+.cta-box h3{font-size:24px;font-weight:600;letter-spacing:-0.02em;margin-bottom:8px}
+.cta-box p{color:var(--ink-2);font-size:16px;margin-bottom:20px}
+.cta-box a.btn{display:inline-block;background:var(--teal);color:#fff;font-weight:500;font-size:16px;padding:13px 26px;border-radius:980px;transition:background .25s}
+.cta-box a.btn:hover{background:var(--teal-deep);text-decoration:none}
+
+/* blog index */
+.blog-head{text-align:center;padding:64px 0 36px}
+.blog-head h1{font-size:clamp(34px,5vw,52px);font-weight:600;letter-spacing:-0.03em}
+.blog-head p{color:var(--ink-2);font-size:19px;margin-top:14px}
+.posts{display:grid;gap:16px;padding-bottom:72px}
+.pcard{display:block;border:1px solid var(--line-2);border-radius:18px;padding:26px 28px;transition:transform .35s var(--ease),box-shadow .35s,border-color .35s}
+.pcard:hover{transform:translateY(-3px);box-shadow:0 20px 44px -28px rgba(20,30,40,.3);border-color:var(--line);text-decoration:none}
+.pcard .ptag{font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--teal-deep)}
+.pcard h2{font-size:23px;font-weight:600;letter-spacing:-0.02em;margin:8px 0 8px;color:var(--ink);line-height:1.2}
+.pcard p{color:var(--ink-2);font-size:15.5px}
+.pcard .more{color:var(--teal-deep);font-weight:500;font-size:14.5px;margin-top:12px;display:inline-block}
+
+/* footer */
+footer{background:var(--bg-2);border-top:1px solid var(--line-2);padding:40px 0;text-align:center;color:var(--ink-3);font-size:13.5px}
+footer a{color:var(--ink-2)}
+@media(max-width:600px){.post{padding:44px 0 30px}.post-body{font-size:17px}}
