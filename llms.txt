@@ -19,12 +19,18 @@
 3. It books a real open slot straight into your existing calendar.
 
 ## Who it's for
-Med spas, dental clinics, aesthetic clinics, salons, barbershops, physio and wellness studios, and health clinics — any business where a missed message means a missed booking.
+Appointment-based and inbound-lead businesses where a missed message means a missed booking: med spas, aesthetic & dental clinics, hair/nail salons and barbershops, physio and wellness studios, and home-service trades (plumbers, HVAC, electricians).
 
 ## Pricing
-- One plan: $750/month.
-- No setup fee, no contract, cancel anytime.
+- One plan: $750/month. No setup fee, no contract, cancel anytime.
 - Guarantee: if it doesn't pay for itself in month one, you don't pay.
+- Full machine-readable pricing: https://frontdesk.works/pricing.md
+
+## Key pages
+- Home: https://frontdesk.works/
+- Live demo: https://frontdesk.works/#live-demo
+- Blog (guides): https://frontdesk.works/blog/
+- Pricing (machine-readable): https://frontdesk.works/pricing.md
 
 ## Key facts (for citation)
 - Roughly 30–40% of calls to busy clinics go unanswered, and most callers don't leave a voicemail.
