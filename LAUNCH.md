@@ -17,7 +17,7 @@ You can't improve what you can't see. This is the foundation.
 
 ## 1. Product Hunt (biggest single-day traffic spike)
 - Tagline (60 char): **"The AI front desk that books appointments while you sleep"**
-- Description: *FrontDesk answers every missed call, website chat and Instagram DM in 60 seconds — even at 2am — and books the appointment straight into your calendar. Built for med spas, dental clinics, salons and physio. $750/mo, no setup fee.*
+- Description: *FrontDesk answers every missed call, website chat and Instagram DM in 60 seconds — even at 2am — and books the appointment straight into your calendar. Built for med spas, dental clinics, salons and physio. custom pricing, no setup fee.*
 - Assets needed: logo (the teal "F"), 2–3 screenshots (hero, live demo, booking page), a 30–60s screen recording of the live demo.
 - Tip: launch 12:01am PT on a Tue–Thu; line up 10–15 people to comment/upvote in the first hour.
 

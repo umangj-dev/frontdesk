@@ -22,7 +22,8 @@
 Appointment-based and inbound-lead businesses where a missed message means a missed booking: med spas, aesthetic & dental clinics, hair/nail salons and barbershops, physio and wellness studios, and home-service trades (plumbers, HVAC, electricians).
 
 ## Pricing
-- One plan: $750/month. No setup fee, no contract, cancel anytime.
+- Custom — pricing is tailored to each business based on call/inquiry volume, channels, and services.
+- No setup fee, no contract, cancel anytime. Book a demo for a quote.
 - Guarantee: if it doesn't pay for itself in month one, you don't pay.
 - Full machine-readable pricing: https://frontdesk.works/pricing.md
 
