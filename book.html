@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Book an appointment</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0c0b0a; --ink-2:#131210; --ink-3:#1b1916;
+    --cream:#f4efe4; --cream-2:#c5bdae; --dim:#8a8174; --dim-2:#5d564c;
+    --line:rgba(244,239,228,.10); --line-2:rgba(244,239,228,.18);
+    --teal:#28cdab; --amber:#f0c270;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;background:var(--ink);color:var(--cream);
+    -webkit-font-smoothing:antialiased;line-height:1.5;padding:18px;min-height:100vh;display:flex;align-items:flex-start;justify-content:center}
+  ::selection{background:var(--teal);color:#042019}
+  .card{width:100%;max-width:520px;background:linear-gradient(180deg,var(--ink-2),var(--ink));
+    border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .mono{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .serif{font-family:'Instrument Serif',Georgia,serif}
+
+  /* header */
+  .hd{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px}
+  .av{width:42px;height:42px;border-radius:11px;background:var(--teal);display:grid;place-items:center;color:#042019;font-family:'Instrument Serif',serif;font-size:22px;flex-shrink:0}
+  .hd .nm{font-family:'Instrument Serif',serif;font-size:21px;line-height:1.05}
+  .hd .st{font-size:12px;color:var(--teal);display:flex;align-items:center;gap:6px;margin-top:2px}
+  .hd .st .p{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* progress */
+  .steps{display:flex;gap:6px;padding:16px 24px 0}
+  .steps .s{flex:1;height:3px;border-radius:2px;background:var(--line-2);transition:background .4s}
+  .steps .s.on{background:var(--teal)}
+
+  .body{padding:22px 24px 26px}
+  .step-label{color:var(--dim);margin-bottom:6px}
+  .step-title{font-family:'Instrument Serif',serif;font-size:26px;margin-bottom:20px;line-height:1.05}
+  .step-title em{font-style:italic;color:var(--amber)}
+
+  /* service list */
+  .opt{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;
+    background:var(--ink-3);border:1px solid var(--line);border-radius:12px;padding:15px 17px;margin-bottom:10px;
+    cursor:pointer;color:var(--cream);font-family:inherit;font-size:15px;transition:border-color .2s,transform .2s,background .2s}
+  .opt:hover{border-color:var(--line-2);transform:translateY(-1px)}
+  .opt.sel{border-color:var(--teal);background:rgba(40,205,171,.07)}
+  .opt .nm{font-weight:500}
+  .opt .meta{font-size:13px;color:var(--dim);margin-top:2px}
+  .opt .pr{font-family:'Instrument Serif',serif;font-size:20px;color:var(--cream);white-space:nowrap}
+  .opt.sel .pr{color:var(--teal)}
+
+  /* dates / times */
+  .grid{display:grid;gap:8px}
+  .dates{grid-template-columns:repeat(4,1fr);margin-bottom:22px}
+  .times{grid-template-columns:repeat(3,1fr)}
+  .pick{background:var(--ink-3);border:1px solid var(--line);border-radius:10px;padding:11px 6px;text-align:center;
+    cursor:pointer;color:var(--cream);font-family:inherit;transition:all .2s}
+  .pick:hover{border-color:var(--line-2)}
+  .pick.sel{border-color:var(--teal);background:rgba(40,205,171,.07);color:var(--teal)}
+  .pick .dow{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+  .pick.sel .dow{color:var(--teal)}
+  .pick .dnum{font-family:'Instrument Serif',serif;font-size:22px;line-height:1.1;margin-top:2px}
+  .pick.time{padding:12px 6px;font-size:14px;font-variant-numeric:tabular-nums}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 12px}
+
+  /* form */
+  .field{margin-bottom:13px}
+  .field label{display:block;font-size:12.5px;color:var(--dim);margin-bottom:6px}
+  .field input{width:100%;background:var(--ink-3);border:1px solid var(--line);border-radius:10px;padding:13px 14px;
+    color:var(--cream);font-size:15px;font-family:inherit;outline:none;transition:border-color .2s}
+  .field input:focus{border-color:var(--teal)}
+  .field input::placeholder{color:var(--dim-2)}
+
+  /* summary chip */
+  .summary{background:var(--ink-3);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:13.5px;color:var(--cream-2)}
+  .summary b{color:var(--cream);font-weight:600}
+  .summary .row{display:flex;justify-content:space-between;padding:3px 0}
+
+  /* buttons */
+  .actions{display:flex;gap:10px;margin-top:18px}
+  .btn{flex:1;border:none;border-radius:11px;padding:15px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform .25s var(--ease),background .25s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-primary{background:var(--cream);color:#0c0b0a;flex:2}
+  .btn-primary:not(:disabled):hover{background:var(--teal)}
+  .btn-ghost{background:transparent;color:var(--cream);border:1px solid var(--line-2)}
+  .btn-ghost:hover{border-color:var(--cream)}
+
+  /* confirmation */
+  .done{text-align:center;padding:30px 10px 14px}
+  .check{width:64px;height:64px;border-radius:50%;background:rgba(40,205,171,.12);border:1px solid var(--teal);
+    display:grid;place-items:center;margin:0 auto 20px;animation:pop .5s var(--ease)}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+  .check svg{width:30px;height:30px;color:var(--teal)}
+  .done h2{font-family:'Instrument Serif',serif;font-size:30px;margin-bottom:10px}
+  .done p{color:var(--dim);font-size:15px;max-width:36ch;margin:0 auto 22px}
+  .foot{text-align:center;font-size:11px;color:var(--dim-2);padding:14px;border-top:1px solid var(--line);letter-spacing:.03em}
+  .foot b{color:var(--dim)}
+  .hidden{display:none}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="hd">
+      <div class="av" id="av">L</div>
+      <div>
+        <div class="nm" id="cname">Booking</div>
+        <div class="st"><span class="p"></span><span id="cstatus">Online · book instantly</span></div>
+      </div>
+    </div>
+
+    <div class="steps" id="steps">
+      <div class="s on"></div><div class="s"></div><div class="s"></div>
+    </div>
+
+    <div class="body" id="body"><!-- steps render here --></div>
+
+    <div class="foot">Powered by <b>FrontDesk</b> · secured booking</div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  // ---- config (in production: GET clients/<id>.json) ----
+  var CLIENTS = {
+    "demo-clinic": {
+      name:"Lumière Aesthetics", accent:"#28cdab",
+      services:[
+        {name:"Free consultation", meta:"20 min · meet your injector", price:"$0"},
+        {name:"Botox", meta:"30 min", price:"from $12/unit"},
+        {name:"Dermal fillers", meta:"45 min", price:"from $650"},
+        {name:"HydraFacial", meta:"50 min", price:"$199"},
+        {name:"Laser hair removal", meta:"30 min", price:"from $120"}
+      ]
+    }
+  };
+  function param(k){ return new URLSearchParams(location.search).get(k); }
+  var ID = param("client") || "demo-clinic";
+  var CFG = CLIENTS[ID] || { name:"Our clinic", accent:"#28cdab", services:[
+    {name:"Consultation", meta:"20 min", price:"Free"},
+    {name:"Standard appointment", meta:"30 min", price:""}
+  ]};
+
+  // apply accent + identity
+  document.documentElement.style.setProperty("--teal", CFG.accent || "#28cdab");
+  document.getElementById("cname").textContent = CFG.name;
+  document.getElementById("av").textContent = (CFG.name[0]||"F");
+  document.title = "Book · " + CFG.name;
+
+  var body = document.getElementById("body");
+  var steps = document.querySelectorAll("#steps .s");
+  var state = { service:null, date:null, time:null, name:"", email:"", phone:"" };
+
+  function setStep(n){ steps.forEach(function(s,i){ s.classList.toggle("on", i<=n); }); }
+
+  // ---- dates: next 8 open days (skip Sundays) ----
+  var DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function nextDays(n){
+    var out=[], d=new Date(); d.setHours(0,0,0,0);
+    while(out.length<n){ d.setDate(d.getDate()+1); if(d.getDay()!==0){ out.push(new Date(d)); } }
+    return out;
+  }
+  var TIMES=["9:00 AM","10:30 AM","12:00 PM","1:30 PM","3:00 PM","4:30 PM"];
+
+  // ---------- STEP 1: service ----------
+  function step1(){
+    setStep(0);
+    var h='<div class="mono step-label">Step 1 of 3</div><div class="step-title">What can we <em>book you in</em> for?</div>';
+    CFG.services.forEach(function(s,i){
+      h+='<button class="opt'+(state.service&&state.service.name===s.name?' sel':'')+'" data-i="'+i+'">'+
+         '<span><span class="nm">'+esc(s.name)+'</span>'+(s.meta?'<div class="meta">'+esc(s.meta)+'</div>':'')+'</span>'+
+         (s.price?'<span class="pr">'+esc(s.price)+'</span>':'')+'</button>';
+    });
+    body.innerHTML=h;
+    body.querySelectorAll(".opt").forEach(function(b){
+      b.addEventListener("click",function(){ state.service=CFG.services[+b.dataset.i]; step2(); });
+    });
+  }
+
+  // ---------- STEP 2: date + time ----------
+  function step2(){
+    setStep(1);
+    var days=nextDays(8);
+    var h='<div class="mono step-label">Step 2 of 3 · '+esc(state.service.name)+'</div><div class="step-title">Pick a <em>day & time</em></div>';
+    h+='<div class="grid dates">';
+    days.forEach(function(d,i){
+      var key=d.toISOString().slice(0,10);
+      h+='<button class="pick date'+(state.date===key?' sel':'')+'" data-key="'+key+'" data-lbl="'+DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+'">'+
+         '<div class="dow">'+DOW[d.getDay()]+'</div><div class="dnum">'+d.getDate()+'</div></button>';
+    });
+    h+='</div>';
+    h+='<div id="timesWrap" class="'+(state.date?'':'hidden')+'"><p class="sub">Available times</p><div class="grid times" id="times"></div></div>';
+    h+='<div class="actions"><button class="btn btn-ghost" id="back">Back</button><button class="btn btn-primary" id="next" disabled>Continue</button></div>';
+    body.innerHTML=h;
+
+    body.querySelectorAll(".date").forEach(function(b){
+      b.addEventListener("click",function(){
+        state.date=b.dataset.key; state.dateLbl=b.dataset.lbl; state.time=null;
+        body.querySelectorAll(".date").forEach(function(x){x.classList.remove("sel")});
+        b.classList.add("sel"); renderTimes();
+      });
+    });
+    if(state.date) renderTimes();
+    body.querySelector("#back").addEventListener("click",step1);
+    body.querySelector("#next").addEventListener("click",function(){ if(state.time) step3(); });
+
+    function renderTimes(){
+      var w=body.querySelector("#timesWrap"); w.classList.remove("hidden");
+      var t=body.querySelector("#times"); t.innerHTML="";
+      TIMES.forEach(function(tm){
+        var b=document.createElement("button"); b.className="pick time"+(state.time===tm?" sel":""); b.textContent=tm;
+        b.addEventListener("click",function(){
+          state.time=tm; t.querySelectorAll(".time").forEach(function(x){x.classList.remove("sel")});
+          b.classList.add("sel"); body.querySelector("#next").disabled=false;
+        });
+        t.appendChild(b);
+      });
+      body.querySelector("#next").disabled=!state.time;
+    }
+  }
+
+  // ---------- STEP 3: details ----------
+  function step3(){
+    setStep(2);
+    var h='<div class="mono step-label">Step 3 of 3</div><div class="step-title">Almost there — <em>your details</em></div>';
+    h+='<div class="summary">'+
+       '<div class="row"><span>Service</span><b>'+esc(state.service.name)+'</b></div>'+
+       '<div class="row"><span>When</span><b>'+esc(state.dateLbl)+' · '+esc(state.time)+'</b></div>'+
+       (state.service.price?'<div class="row"><span>Price</span><b>'+esc(state.service.price)+'</b></div>':'')+
+       '</div>';
+    h+='<div class="field"><label>Full name</label><input id="f-name" placeholder="Jane Smith" value="'+esc(state.name)+'"></div>';
+    h+='<div class="field"><label>Email</label><input id="f-email" type="email" placeholder="jane@email.com" value="'+esc(state.email)+'"></div>';
+    h+='<div class="field"><label>Mobile</label><input id="f-phone" type="tel" placeholder="(604) 555-0142" value="'+esc(state.phone)+'"></div>';
+    h+='<div class="actions"><button class="btn btn-ghost" id="back">Back</button><button class="btn btn-primary" id="confirm" disabled>Confirm booking</button></div>';
+    body.innerHTML=h;
+
+    var n=body.querySelector("#f-name"), e=body.querySelector("#f-email"), p=body.querySelector("#f-phone"), c=body.querySelector("#confirm");
+    function validate(){
+      state.name=n.value.trim(); state.email=e.value.trim(); state.phone=p.value.trim();
+      var ok = state.name.length>1 && /\S+@\S+\.\S+/.test(state.email) && state.phone.replace(/\D/g,"").length>=7;
+      c.disabled=!ok;
+    }
+    [n,e,p].forEach(function(x){ x.addEventListener("input",validate); });
+    validate();
+    body.querySelector("#back").addEventListener("click",step2);
+    c.addEventListener("click",confirm);
+  }
+
+  // ---------- CONFIRM ----------
+  function confirm(){
+    // BACKEND SEAM: POST the booking to your API here.
+    // fetch("api/book",{method:"POST",headers:{"Content-Type":"application/json"},
+    //   body:JSON.stringify({client:ID, ...state})});
+    setStep(2);
+    body.innerHTML =
+      '<div class="done">'+
+      '<div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>'+
+      '<h2>You’re booked in.</h2>'+
+      '<p>'+esc(state.service.name)+' on <b style="color:var(--cream)">'+esc(state.dateLbl)+' at '+esc(state.time)+'</b>. '+
+      'A confirmation is on its way to '+esc(state.email)+'.</p>'+
+      '<div class="summary" style="text-align:left">'+
+        '<div class="row"><span>Name</span><b>'+esc(state.name)+'</b></div>'+
+        '<div class="row"><span>Service</span><b>'+esc(state.service.name)+'</b></div>'+
+        '<div class="row"><span>When</span><b>'+esc(state.dateLbl)+' · '+esc(state.time)+'</b></div>'+
+      '</div>'+
+      '<div class="actions"><button class="btn btn-ghost" id="again">Book another</button></div>'+
+      '</div>';
+    body.querySelector("#again").addEventListener("click",function(){ state={service:null,date:null,time:null,name:state.name,email:state.email,phone:state.phone}; step1(); });
+  }
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];}); }
+
+  step1();
+})();
+</script>
+</body>
+</html>
