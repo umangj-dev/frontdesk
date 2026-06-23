@@ -15,3 +15,6 @@ node_modules/
 /tmp/
 .vscode/
 .idea/
+
+# Claude Code project tooling — local only
+.claude/
