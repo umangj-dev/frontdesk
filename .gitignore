@@ -1,0 +1,17 @@
+# Secrets — never commit
+.env
+.env.*
+*.key
+
+# Local data (clients, settings, bookings, backups) — Railway uses a Volume
+data/
+clients/
+backups/
+
+# OS / editor noise
+.DS_Store
+node_modules/
+*.log
+/tmp/
+.vscode/
+.idea/

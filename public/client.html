@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FrontDesk — Client</title>
+<style>
+  :root{
+    --bg:#08090c; --panel:#101319; --panel2:#0c0f14; --line:#1d222b; --line2:#262d38;
+    --ink:#f3f5f8; --mut:#8a94a2; --mut2:#5e6878; --accent:#19c3a3; --accent2:#12a085;
+    --green:#2bd47f; --amber:#f2b53b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:var(--bg);color:var(--ink);}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:rgba(25,195,163,.3);}
+
+  .top{height:58px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 24px;
+    position:sticky;top:0;background:rgba(8,9,12,.85);backdrop-filter:blur(10px);z-index:50;}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;}
+  .brand .logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;color:#04130f;font-weight:800;font-size:15px;}
+  .back{color:var(--mut);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  .back:hover{color:var(--ink);}
+  .top .sp{flex:1;}
+  .me{width:30px;height:30px;border-radius:50%;background:#222a35;display:grid;place-items:center;font-size:13px;color:var(--mut);}
+
+  .wrap{max-width:840px;margin:0 auto;padding:30px 24px 80px;}
+
+  /* Client header */
+  .chead{display:flex;align-items:center;gap:16px;margin-bottom:6px;}
+  .chead .ava{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-weight:800;color:#04130f;font-size:22px;flex-shrink:0;}
+  .chead h1{margin:0;font-size:23px;letter-spacing:-.02em;}
+  .chead .tg{color:var(--mut);font-size:13.5px;}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 11px;border-radius:30px;}
+  .badge .d{width:7px;height:7px;border-radius:50%;}
+  .badge.live{background:rgba(43,212,127,.1);color:var(--green);} .badge.live .d{background:var(--green);box-shadow:0 0 7px var(--green);}
+  .badge.setup{background:rgba(242,181,59,.1);color:var(--amber);} .badge.setup .d{background:var(--amber);}
+  .sub{display:flex;align-items:center;gap:14px;margin:14px 0 4px;}
+  .progwrap{flex:1;height:7px;background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;max-width:360px;}
+  .progwrap i{display:block;height:100%;background:var(--accent);}
+  .pct{color:var(--mut);font-size:13px;}
+  .quick{display:flex;gap:9px;margin:16px 0 26px;}
+
+  .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04130f;border:0;border-radius:9px;
+    padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink);}
+  .btn.ghost:hover{border-color:var(--accent);}
+  .btn.sm{padding:7px 12px;font-size:12.5px;}
+
+  /* Task cards */
+  .task{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:13px;}
+  .task .th{display:flex;align-items:center;gap:12px;}
+  .task .ti{width:34px;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--line2);
+    display:grid;place-items:center;font-size:17px;flex-shrink:0;}
+  .task .tt{flex:1;min-width:0;}
+  .task .tt b{font-size:14.5px;}
+  .task .tt .d{color:var(--mut);font-size:12.5px;margin-top:2px;}
+  .task .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;align-items:center;}
+  .codebtn{background:var(--panel2);border:1px solid var(--line2);color:var(--accent);border-radius:8px;
+    padding:7px 13px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .codebtn:hover{border-color:var(--accent);}
+  .codepanel{display:none;margin-top:12px;}
+  .codepanel.on{display:block;}
+  .codeblock{background:#070b09;border:1px solid #143a30;color:var(--accent);border-radius:9px;
+    padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;line-height:1.6;}
+  .codelabel{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 5px;}
+  .form{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .form input{flex:1;min-width:140px;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);
+    border-radius:8px;padding:10px 12px;font-size:13px;outline:none;}
+  .form input:focus{border-color:var(--accent);}
+  .ok{font-size:12.5px;margin-top:8px;display:none;}
+  .steps{margin:8px 0 0;padding-left:18px;color:var(--mut);font-size:12.5px;line-height:1.7;}
+  .steps b{color:var(--ink);} .steps a{color:var(--accent);}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand"><span class="logo">F</span> FrontDesk</div>
+    <div class="back" onclick="location.href='/admin.html'">← Clients</div>
+    <div class="sp"></div>
+    <div class="me">U</div>
+  </div>
+
+  <div class="wrap">
+    <div class="chead">
+      <div class="ava" id="ava">?</div>
+      <div><h1 id="cname">Client</h1><div class="tg" id="ctag"></div>
+        <a class="tg" id="csite" target="_blank" style="color:var(--accent);display:none"></a></div>
+      <div id="cbadge"></div>
+    </div>
+    <div class="sub"><div class="progwrap"><i id="cbar"></i></div><span class="pct" id="cpct">0% set up</span></div>
+    <div class="quick">
+      <a class="btn ghost sm" id="qChat" target="_blank">💬 Test the chat</a>
+      <a class="btn ghost sm" id="qBook" target="_blank">📅 Booking page</a>
+      <button class="btn ghost sm" style="margin-left:auto;color:#e0697a;border-color:#3a2228" onclick="delClient()">🗑 Delete client</button>
+    </div>
+
+    <div id="tasks"></div>
+  </div>
+
+<script>
+  const $=(id)=>document.getElementById(id);
+  const CLIENT=new URLSearchParams(location.search).get("client")||"demo-clinic";
+  const origin=location.origin;
+  let cfg={}, settings={}, intg={}, global={};
+
+  async function load(){
+    [cfg,intg,settings,global]=await Promise.all([
+      fetch(`/api/${CLIENT}/config`).then(r=>r.json()).catch(()=>({name:CLIENT})),
+      fetch(`/api/${CLIENT}/integration`).then(r=>r.json()).catch(()=>({percent:0,steps:[]})),
+      fetch(`/api/${CLIENT}/settings`).then(r=>r.json()).catch(()=>({twilio:{},instagram:{}})),
+      fetch(`/api/settings/global`).then(r=>r.json()).catch(()=>({hasKey:false})),
+    ]);
+    const accent=cfg.brand?.accent||"#19c3a3";
+    document.documentElement.style.setProperty("--accent",accent);
+    $("ava").textContent=(cfg.name||"?")[0]; $("ava").style.background=`linear-gradient(135deg,${accent},${accent})`;
+    $("cname").textContent=cfg.name||CLIENT; $("ctag").textContent=cfg.tagline||"";
+    if(cfg.website){ const a=$("csite"); a.style.display="block"; a.textContent="🔗 "+cfg.website.replace(/^https?:\/\//,""); a.href=cfg.website; }
+    document.title=`FrontDesk — ${cfg.name||CLIENT}`;
+    const live=global.hasKey && intg.percent>=70;
+    $("cbadge").innerHTML=live?'<span class="badge live"><span class="d"></span>Live</span>':'<span class="badge setup"><span class="d"></span>Setting up</span>';
+    $("cbar").style.width=(intg.percent||0)+"%"; $("cpct").textContent=(intg.percent||0)+"% set up";
+    $("qChat").href=`/?client=${CLIENT}`; $("qBook").href=`/book.html?client=${CLIENT}`;
+    render();
+  }
+
+  const st=(on)=>on?'<span class="badge live"><span class="d"></span>Live</span>':'<span class="badge setup"><span class="d"></span>To do</span>';
+  const hosted = intg=>intg.steps?.find(s=>s.key==='hosted')?.done;
+
+  function task({icon,title,desc,done,body}){
+    return `<div class="task">
+      <div class="th"><div class="ti">${icon}</div><div class="tt"><b>${title}</b><div class="d">${desc}</div></div>${st(done)}</div>
+      ${body}</div>`;
+  }
+
+  function render(){
+    const embed=`&lt;script src="${origin}/embed.js" data-client="${CLIENT}" async&gt;&lt;/script&gt;`;
+    const bookLink=`${origin}/book.html?client=${CLIENT}`;
+    const smsHook=`${origin}/api/${CLIENT}/sms`;
+    const igHook=`${origin}/api/${CLIENT}/instagram`;
+
+    $("tasks").innerHTML=
+      // AI brain
+      task({icon:"🧠",title:"AI brain — answers 24/7",done:global.hasKey,
+        desc:global.hasKey?"Connected — the AI answers every customer automatically.":"Connect once and the AI answers autonomously, forever (~$0.02/chat).",
+        body:`<div class="actions">
+          <button class="codebtn" onclick="toggle('cBrain')">⌨ Code / Key</button>
+          ${global.hasKey?'':'<span class="ok" style="display:inline;color:var(--mut)">Applies to all clients</span>'}
+        </div>
+        <div class="codepanel" id="cBrain">
+          <div class="form"><input id="brainKey" type="password" placeholder="sk-ant-..." />
+            <button class="btn sm" onclick="saveBrain()">Activate AI</button></div>
+          <div class="steps">Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.</div>
+          <div class="ok" id="brainOk"></div>
+        </div>`}) +
+
+      // Website chat
+      task({icon:"🌐",title:"Website chat — install on their site",done:settings.embedInstalled,
+        desc:(cfg.website?`Paste one line on <b style="color:var(--accent)">${cfg.website.replace(/^https?:\/\//,"")}</b>`:"Paste one line on the client's website")+" (WordPress, Squarespace, Wix, Webflow, Shopify).",
+        body:`<div class="actions">
+          <button class="codebtn" onclick="toggle('cEmbed')">⌨ Code</button>
+          <button class="btn ghost sm" onclick="mark('embedInstalled',${!settings.embedInstalled})">${settings.embedInstalled?'Mark not installed':'✓ Mark installed'}</button>
+        </div>
+        <div class="codepanel" id="cEmbed">
+          <div class="codelabel">Paste before &lt;/body&gt;</div>
+          <div class="codeblock" id="embedCode">${embed}</div>
+          <button class="btn sm" style="margin-top:9px" onclick="copy('embedCode',this)">Copy code</button>
+        </div>`}) +
+
+      // Booking link
+      task({icon:"📅",title:"Booking link — share it",done:settings.bookingShared,
+        desc:"Put in their Instagram bio, Google 'Book' button, emails, website 'Book Now'.",
+        body:`<div class="actions">
+          <button class="codebtn" onclick="toggle('cBook')">⌨ Link</button>
+          <a class="btn ghost sm" href="${bookLink}" target="_blank">Open page ↗</a>
+          <button class="btn ghost sm" onclick="mark('bookingShared',${!settings.bookingShared})">${settings.bookingShared?'Mark not shared':'✓ Mark shared'}</button>
+        </div>
+        <div class="codepanel" id="cBook">
+          <div class="codeblock" id="bookCode">${bookLink}</div>
+          <button class="btn sm" style="margin-top:9px" onclick="copy('bookCode',this)">Copy link</button>
+        </div>`}) +
+
+      // Calendar link
+      task({icon:"📆",title:"Booking calendar link",done:!!(settings.booking&&settings.booking.calendarUrl),
+        desc:"Paste the client's real calendar (Calendly, Google, Acuity). The AI shares it so customers pick a time and it lands on the client's calendar.",
+        body:`<div class="actions"><button class="codebtn" onclick="toggle('cCal')">⌨ Add link</button>
+          ${settings.booking&&settings.booking.calendarUrl?`<a class="btn ghost sm" href="${settings.booking.calendarUrl}" target="_blank">Open calendar ↗</a>`:''}</div>
+        <div class="codepanel" id="cCal">
+          <div class="form"><input id="calUrl" placeholder="https://calendly.com/theclinic/consult" value="${(settings.booking&&settings.booking.calendarUrl)||''}" /><button class="btn sm" onclick="saveCal()">Save</button></div>
+          <div class="steps">Free at <a href="https://calendly.com" target="_blank">calendly.com</a>. Paste the booking link the client gives you.</div>
+          <div class="ok" id="calOk"></div>
+        </div>`}) +
+
+      // Twilio
+      task({icon:"📲",title:"Missed-call → text (Twilio)",done:settings.twilio.hasAuth,
+        desc:"Enter the client's Twilio details — missed-call text-back & confirmations go live for real.",
+        body:`<div class="actions"><button class="codebtn" onclick="toggle('cTw')">⌨ Code / Connect</button></div>
+        <div class="codepanel" id="cTw">
+          <div class="codelabel">Set this as the number's Messaging webhook</div>
+          <div class="codeblock" id="smsHook">${smsHook}</div>
+          <button class="btn ghost sm" style="margin:9px 0" onclick="copy('smsHook',this)">Copy webhook URL</button>
+          <div class="form"><input id="twSid" placeholder="Account SID (AC...)" /></div>
+          <div class="form"><input id="twTok" type="password" placeholder="Auth token" /><input id="twFrom" placeholder="Twilio number +1..." value="${settings.twilio.from||''}" /></div>
+          <div class="form"><button class="btn sm" onclick="saveTwilio()">Save & connect</button></div>
+          <div class="steps">1) Free account at <a href="https://twilio.com" target="_blank">twilio.com</a> · 2) buy a number (~$1/mo) · 3) paste the webhook above.</div>
+          <div class="form"><input id="twTest" placeholder="Your mobile to test +1..." /><button class="btn ghost sm" onclick="testSms()">Send test SMS</button></div>
+          <div class="ok" id="twOk"></div>
+        </div>`}) +
+
+      // Instagram
+      task({icon:"📸",title:"Instagram DM auto-reply (Meta)",done:settings.instagram.hasToken,
+        desc:"Enter the client's Instagram (Meta) credentials — DMs auto-reply with answers + a booking link.",
+        body:`<div class="actions"><button class="codebtn" onclick="toggle('cIg')">⌨ Code / Connect</button></div>
+        <div class="codepanel" id="cIg">
+          <div class="codelabel">Webhook URL (verify token: frontdesk-verify)</div>
+          <div class="codeblock" id="igHook">${igHook}</div>
+          <button class="btn ghost sm" style="margin:9px 0" onclick="copy('igHook',this)">Copy webhook URL</button>
+          <div class="form"><input id="igTok" type="password" placeholder="Page access token" /></div>
+          <div class="form"><input id="igPage" placeholder="Page ID" value="${settings.instagram.pageId||''}" /><button class="btn sm" onclick="saveIg()">Save & connect</button></div>
+          <div class="steps">Connect via <a href="https://business.facebook.com" target="_blank">business.facebook.com</a> → add the webhook above.</div>
+          <div class="ok" id="igOk"></div>
+        </div>`}) +
+
+      // Hosting
+      task({icon:"🚀",title:"Hosted 24/7",done:hosted(intg),
+        desc:"Deploy so it runs without your computer on. Auto-detects once live.",
+        body:`<div class="actions"><button class="codebtn" onclick="toggle('cHost')">⌨ How</button></div>
+        <div class="codepanel" id="cHost">
+          <div class="steps">Deploy to <a href="https://railway.app" target="_blank">Railway</a> or <a href="https://render.com" target="_blank">Render</a> (free tier). One host serves ~20 clients. I can do this for you.</div>
+        </div>`});
+  }
+
+  window.toggle=(id)=>{ $(id).classList.toggle("on"); };
+  window.copy=(id,btn)=>{ navigator.clipboard.writeText($(id).textContent); const t=btn.textContent; btn.textContent="Copied ✓"; setTimeout(()=>btn.textContent=t,1300); };
+  window.mark=async(key,val)=>{ await fetch(`/api/${CLIENT}/settings`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({[key]:val})}); load(); };
+  window.saveBrain=async()=>{ const k=$("brainKey").value.trim(); if(!k)return; await fetch('/api/settings/global',{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({anthropicKey:k})}); $("brainOk").style.display="block"; $("brainOk").style.color="var(--accent)"; $("brainOk").textContent="✓ AI activated."; load(); };
+  window.saveTwilio=async()=>{ const sid=$("twSid").value.trim(),token=$("twTok").value.trim(),from=$("twFrom").value.trim(); const o=$("twOk"); o.style.display="block"; if(!sid||!token||!from){o.style.color="var(--amber)";o.textContent="Enter SID, token & number.";return;} await fetch(`/api/${CLIENT}/settings`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({twilio:{sid,token,from}})}); o.style.color="var(--accent)"; o.textContent="✓ Connected — SMS is live."; load(); };
+  window.saveIg=async()=>{ const token=$("igTok").value.trim(),pageId=$("igPage").value.trim(); const o=$("igOk"); o.style.display="block"; if(!token||!pageId){o.style.color="var(--amber)";o.textContent="Enter token & page ID.";return;} await fetch(`/api/${CLIENT}/settings`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({instagram:{token,pageId}})}); o.style.color="var(--accent)"; o.textContent="✓ Connected."; load(); };
+  window.testSms=async()=>{ const to=$("twTest").value.trim(); if(!to)return; const r=await (await fetch(`/api/${CLIENT}/test-sms`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({to})})).json(); const o=$("twOk"); o.style.display="block"; o.style.color=r.simulated?"var(--amber)":(r.ok?"var(--accent)":"var(--amber)"); o.textContent=r.simulated?"Simulated (no real Twilio creds yet)":(r.ok?"✓ Real test SMS sent!":"✗ "+(r.message||r.status)); };
+  window.saveCal=async()=>{ const url=$("calUrl").value.trim(); const o=$("calOk"); o.style.display="block"; if(!url){o.style.color="var(--amber)";o.textContent="Paste a calendar link.";return;} await fetch(`/api/${CLIENT}/settings`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({booking:{calendarUrl:url}})}); o.style.color="var(--accent)"; o.textContent="✓ Saved — the AI will share this link."; load(); };
+  window.delClient=async()=>{
+    if(!confirm(`Delete ${cfg.name||CLIENT}? This removes their front desk and data. This can't be undone.`)) return;
+    await fetch(`/api/clients/${CLIENT}`,{method:"DELETE"});
+    location.href="/admin.html";
+  };
+  load();
+</script>
+</body>
+</html>

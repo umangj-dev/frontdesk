@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontdesk",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 5210
+    }
+  ]
+}

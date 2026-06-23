@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FrontDesk — Sign in</title>
+<style>
+  :root{--bg:#08090c;--panel:#101319;--line:#262d38;--ink:#f3f5f8;--mut:#8a94a2;--accent:#19c3a3;--accent2:#12a085;--amber:#f2b53b;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:radial-gradient(900px 600px at 70% -10%,#11161c,var(--bg));color:var(--ink);display:grid;place-items:center;min-height:100vh;}
+  .card{width:360px;max-width:92vw;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 28px;box-shadow:0 40px 90px -40px rgba(0,0,0,.8);}
+  .logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#04130f;font-weight:800;font-size:22px;margin-bottom:18px;}
+  h1{font-size:20px;margin:0 0 4px;letter-spacing:-.02em;}
+  p{color:var(--mut);font-size:13px;margin:0 0 20px;}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:7px;font-weight:600;}
+  input{width:100%;background:#0c0f14;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:12px 14px;font-size:15px;outline:none;}
+  input:focus{border-color:var(--accent);}
+  button{width:100%;margin-top:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04130f;border:0;border-radius:10px;padding:12px;font-weight:700;font-size:14px;cursor:pointer;}
+  .out{font-size:12.5px;margin-top:12px;display:none;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">F</div>
+    <h1 id="title">Sign in</h1>
+    <p id="sub">Enter your password to open the dashboard.</p>
+    <label id="lbl">Password</label>
+    <input id="pw" type="password" placeholder="••••••••" autofocus />
+    <button id="go">Sign in</button>
+    <div class="out" id="out"></div>
+  </div>
+<script>
+  const $=(id)=>document.getElementById(id);
+  let configured=true;
+  fetch('/api/auth/state').then(r=>r.json()).then(s=>{
+    configured=s.configured;
+    if(s.authed){ location.href='/admin.html'; return; }
+    if(!configured){ $("title").textContent="Create your password"; $("sub").textContent="First time — set a password to lock your dashboard."; $("go").textContent="Set password & enter"; $("pw").placeholder="Choose a password"; }
+  });
+  async function submit(){
+    const password=$("pw").value; const o=$("out"); o.style.display="block";
+    if(password.length<4){ o.style.color="var(--amber)"; o.textContent="At least 4 characters."; return; }
+    const r=await (await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password})})).json();
+    if(r.ok){ location.href='/admin.html'; } else { o.style.color="var(--amber)"; o.textContent=r.error||"Failed"; }
+  }
+  $("go").onclick=submit;
+  $("pw").addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+</script>
+</body>
+</html>

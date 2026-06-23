@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FrontDesk AI — Live Demo</title>
+<style>
+  :root{
+    --bg:#0a0c0f; --panel:#13161b; --panel2:#0e1115; --line:#232830;
+    --ink:#f1f4f7; --mut:#8b95a1; --accent:#19c3a3; --accent2:#13a589;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
+    background:radial-gradient(1100px 700px at 80% -15%,#121a1e,var(--bg)) fixed;
+    color:var(--ink);min-height:100vh;display:grid;place-items:center;padding:28px;
+  }
+  .stage{width:100%;max-width:1060px;display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;}
+  @media(max-width:880px){.stage{grid-template-columns:1fr;gap:30px;}}
+
+  /* Pitch side */
+  .pitch .badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--accent);
+    border:1px solid #1c3b35;background:#0c1714;padding:5px 12px;border-radius:30px;margin-bottom:18px;}
+  .pitch .badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(25,195,163,.5);}70%{box-shadow:0 0 0 7px rgba(25,195,163,0);}100%{box-shadow:0 0 0 0 rgba(25,195,163,0);}}
+  .pitch h1{font-size:38px;line-height:1.12;margin:0 0 16px;letter-spacing:-.025em;font-weight:700;}
+  .pitch h1 span{background:linear-gradient(90deg,var(--accent),#4fe0c4);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .pitch p{color:var(--mut);margin:0 0 26px;max-width:430px;font-size:16px;}
+  .stat{display:flex;gap:30px;}
+  .stat b{display:block;font-size:28px;color:var(--accent);font-weight:700;letter-spacing:-.01em;}
+  .stat small{color:var(--mut);font-size:12.5px;}
+  .trust{margin-top:26px;color:var(--mut);font-size:12.5px;display:flex;gap:16px;flex-wrap:wrap;}
+  .trust span{display:flex;align-items:center;gap:6px;}
+  .trust .ck{color:var(--accent);}
+
+  /* Widget */
+  .widget{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    box-shadow:0 40px 100px -35px rgba(0,0,0,.8);display:flex;flex-direction:column;height:620px;
+    animation:rise .6s cubic-bezier(.16,1,.3,1);}
+  @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+  .whead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;
+    background:linear-gradient(180deg,rgba(25,195,163,.05),transparent);}
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;font-weight:700;color:#04130f;font-size:16px;flex-shrink:0;position:relative;}
+  .avatar .live{position:absolute;bottom:-1px;right:-1px;width:11px;height:11px;border-radius:50%;background:#2bd47f;border:2px solid var(--panel);}
+  .whead .who b{display:block;font-size:14.5px;}
+  .whead .who small{color:var(--mut);font-size:12px;}
+  .whead .secure{margin-left:auto;color:var(--mut);font-size:11px;display:flex;align-items:center;gap:5px;}
+
+  .log{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;}
+  .log::-webkit-scrollbar{width:6px;} .log::-webkit-scrollbar-thumb{background:#222a30;border-radius:6px;}
+  .row{display:flex;gap:9px;max-width:88%;animation:pop .35s cubic-bezier(.16,1,.3,1);}
+  @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98);}to{opacity:1;transform:none;}}
+  .row.me{align-self:flex-end;flex-direction:row-reverse;}
+  .row .mini{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:12px;font-weight:700;}
+  .row.bot .mini{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04130f;}
+  .row.me .mini{background:#262d34;color:var(--mut);}
+  .bubble{padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.5;}
+  .row.bot .bubble{background:var(--panel2);border:1px solid var(--line);border-top-left-radius:5px;}
+  .row.me .bubble{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04130f;font-weight:500;border-top-right-radius:5px;}
+  .bubble .t{display:block;font-size:10.5px;opacity:.5;margin-top:5px;}
+
+  .typing{display:flex;gap:4px;padding:13px 15px;}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:blink 1.3s infinite;}
+  .typing i:nth-child(2){animation-delay:.2s;} .typing i:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,60%,100%{opacity:.25;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 10px;}
+  .chip{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:30px;
+    padding:8px 14px;font-size:13px;cursor:pointer;transition:.15s;}
+  .chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);}
+
+  .booked{align-self:center;background:#0c1714;border:1px solid #1c3b35;color:var(--accent);
+    border-radius:14px;padding:11px 16px;font-size:13px;text-align:center;animation:pop .4s;max-width:90%;}
+  .booked b{display:block;font-size:14px;margin-bottom:2px;}
+
+  .composer{padding:14px 16px;border-top:1px solid var(--line);display:flex;gap:10px;background:var(--panel2);}
+  .composer input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--ink);
+    border-radius:30px;padding:12px 16px;font-size:14.5px;outline:none;transition:.15s;}
+  .composer input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(25,195,163,.12);}
+  .send{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04130f;border:0;
+    border-radius:50%;width:46px;height:46px;cursor:pointer;font-size:18px;display:grid;place-items:center;
+    flex-shrink:0;transition:.15s;}
+  .send:hover{transform:scale(1.06);} .send:active{transform:scale(.95);}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="pitch">
+      <div class="badge"><span class="pulse"></span> AI Front Desk · Online now</div>
+      <h1 id="h1">Every inquiry, <span>answered in 60 seconds.</span> Even at 2am.</h1>
+      <p id="sub">Your front desk closes. Your AI front desk never does — it answers questions, quotes treatments, and books the appointment before the lead cools off.</p>
+      <div class="stat">
+        <div><b id="cap">0</b><small>booked this session</small></div>
+        <div><b id="rev">$0</b><small>recovered</small></div>
+      </div>
+      <div class="trust">
+        <span><span class="ck">✓</span> Answers 24/7</span>
+        <span><span class="ck">✓</span> Books instantly</span>
+        <span><span class="ck">✓</span> Never misses a lead</span>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="whead">
+        <div class="avatar" id="av">L<span class="live"></span></div>
+        <div class="who"><b id="cname">Lumière Aesthetics</b><small id="ctag">AI Front Desk · typically replies instantly</small></div>
+        <div class="secure">🔒 Secure</div>
+      </div>
+      <div class="log" id="log"></div>
+      <div class="chips" id="chips"></div>
+      <div class="composer">
+        <input id="inp" placeholder="Type a message…" autocomplete="off" />
+        <button class="send" id="send">➤</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const CLIENT=new URLSearchParams(location.search).get("client")||"demo-clinic";
+  const $=(id)=>document.getElementById(id);
+  const log=$("log");
+  let history=[], cfg=null;
+
+  function now(){const d=new Date();return d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});}
+  function add(text,who){
+    const row=document.createElement("div"); row.className="row "+who;
+    const mini=document.createElement("div"); mini.className="mini";
+    mini.textContent= who==="bot" ? (cfg?.brand?.logoText?.[0]||"L") : "You";
+    if(who==="me") mini.textContent="🙂";
+    const b=document.createElement("div"); b.className="bubble";
+    b.innerHTML=text.replace(/</g,"&lt;")+`<span class="t">${now()}</span>`;
+    row.appendChild(mini); row.appendChild(b);
+    log.appendChild(row); log.scrollTop=log.scrollHeight;
+    return row;
+  }
+  function typing(){
+    const row=document.createElement("div"); row.className="row bot"; row.dataset.typing="1";
+    row.innerHTML=`<div class="mini">${cfg?.brand?.logoText?.[0]||"L"}</div><div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div>`;
+    log.appendChild(row); log.scrollTop=log.scrollHeight; return row;
+  }
+  function booked(b){
+    const d=document.createElement("div"); d.className="booked";
+    d.innerHTML=`<b>✓ You're booked${b.service?" for "+b.service:""}!</b>We've sent a confirmation to ${b.phone||"your phone"}.`;
+    log.appendChild(d); log.scrollTop=log.scrollHeight;
+  }
+
+  async function boot(){
+    cfg=await (await fetch(`/api/${CLIENT}/config`)).json();
+    if(!cfg.error){
+      document.documentElement.style.setProperty("--accent",cfg.brand?.accent||"#19c3a3");
+      $("cname").textContent=cfg.name; $("av").firstChild.textContent=(cfg.brand?.logoText||cfg.name)[0];
+      $("ctag").textContent=(cfg.tagline||"AI Front Desk")+" · replies instantly";
+      document.title=cfg.name+" — Front Desk";
+    }
+    setTimeout(()=>{
+      const greet=`Hi! 👋 I'm ${cfg?.name||"the clinic"}'s virtual assistant. I can answer questions about treatments and pricing, or get you booked in. What can I help you with today?`;
+      add(greet,"bot"); history.push({role:"assistant",content:greet});
+      renderChips(["What are your hours?","How much is Botox?","Book me a HydraFacial"]);
+    },500);
+    refresh(); setInterval(refresh,4000);
+  }
+  function renderChips(items){
+    const c=$("chips"); c.innerHTML="";
+    items.forEach(t=>{const el=document.createElement("button");el.className="chip";el.textContent=t;el.onclick=()=>{send(t);};c.appendChild(el);});
+  }
+
+  async function send(text){
+    text=(text||$("inp").value).trim(); if(!text) return;
+    $("inp").value=""; $("chips").innerHTML="";
+    add(text,"me"); history.push({role:"user",content:text});
+    const tp=typing();
+    let res=await (await fetch(`/api/${CLIENT}/chat`,{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({history})})).json();
+
+    if(res.pending){
+      res=await new Promise(resolve=>{const iv=setInterval(async()=>{
+        const t=await (await fetch(`/api/ticket/${res.ticketId}`)).json();
+        if(t.status==="answered"){clearInterval(iv);resolve({reply:t.reply,booked:t.booked});}
+      },1200);});
+    }
+    tp.remove();
+    add(res.reply,"bot"); history.push({role:"assistant",content:res.reply});
+    if(res.booking) booked(res.booking);
+    refresh();
+  }
+
+  async function refresh(){
+    try{
+      const r=await (await fetch(`/api/${CLIENT}/report`)).json();
+      $("cap").textContent=r.captured;
+      $("rev").textContent="$"+(r.estimatedRecoveredRevenue||0).toLocaleString();
+    }catch{}
+  }
+
+  $("send").onclick=()=>send();
+  $("inp").addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+  boot();
+</script>
+</body>
+</html>

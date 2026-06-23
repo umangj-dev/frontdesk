@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Book — FrontDesk AI</title>
+<style>
+  :root{--bg:#0b0d10;--panel:#14171c;--line:#232830;--ink:#eef2f5;--mut:#8b95a1;--accent:#19c3a3;}
+  *{box-sizing:border-box;}
+  body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:radial-gradient(1200px 600px at 70% -10%,#11161c,var(--bg));color:var(--ink);
+    min-height:100vh;display:grid;place-items:center;padding:32px;}
+  .card{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--line);
+    border-radius:18px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.7);}
+  .head{padding:22px 24px;border-bottom:1px solid var(--line);}
+  .logo{font-weight:700;letter-spacing:.12em;color:var(--accent);font-size:13px;}
+  h1{margin:6px 0 2px;font-size:22px;letter-spacing:-.01em;}
+  .sub{color:var(--mut);font-size:13px;}
+  .body{padding:22px 24px;}
+  label{display:block;font-size:12px;color:var(--mut);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;}
+  input,select{width:100%;background:#0d1014;border:1px solid var(--line);color:var(--ink);
+    border-radius:10px;padding:11px 13px;outline:none;font-size:15px;}
+  input:focus,select:focus{border-color:var(--accent);}
+  .slots{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px;}
+  .slot{background:#0d1014;border:1px solid var(--line);color:var(--ink);border-radius:10px;
+    padding:10px;font-size:13px;cursor:pointer;text-align:center;}
+  .slot:hover{border-color:var(--accent);}
+  .slot.on{background:var(--accent);color:#04130f;font-weight:600;border-color:var(--accent);}
+  button{width:100%;margin-top:18px;background:var(--accent);color:#04130f;border:0;border-radius:11px;
+    padding:13px;font-weight:700;font-size:15px;cursor:pointer;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+  .done{text-align:center;padding:30px 24px;}
+  .done .big{font-size:44px;}
+  .done h2{margin:10px 0 6px;}
+  .done p{color:var(--mut);}
+  .hide{display:none;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="logo" id="logo">FRONTDESK</div>
+      <h1 id="name">Book your visit</h1>
+      <div class="sub" id="sub">Choose a time — confirmed instantly by text.</div>
+    </div>
+    <div class="body" id="form">
+      <label>Treatment</label>
+      <select id="service"></select>
+      <label>Pick a time</label>
+      <div class="slots" id="slots"></div>
+      <label>Your name</label>
+      <input id="cname" placeholder="Jane Doe" />
+      <label>Mobile number</label>
+      <input id="phone" placeholder="(604) 555-0000" />
+      <button id="book" disabled>Confirm booking</button>
+    </div>
+    <div class="body done hide" id="done">
+      <div class="big">✓</div>
+      <h2 id="doneTitle">You're booked!</h2>
+      <p id="doneMsg"></p>
+    </div>
+  </div>
+<script>
+  const CLIENT = new URLSearchParams(location.search).get("client") || "demo-clinic";
+  let chosen = null;
+  const $ = (id) => document.getElementById(id);
+
+  async function boot(){
+    const cfg = await (await fetch(`/api/${CLIENT}/config`)).json();
+    if(cfg.error){ $("name").textContent="Unknown client"; return; }
+    document.documentElement.style.setProperty("--accent", cfg.brand?.accent||"#19c3a3");
+    $("logo").textContent = cfg.brand?.logoText || cfg.name;
+    $("name").textContent = `Book at ${cfg.name}`;
+    $("sub").textContent = `${cfg.tagline} · confirmed instantly by text`;
+    document.title = `Book — ${cfg.name}`;
+    cfg.services.forEach(s=>{
+      const o=document.createElement("option");
+      o.value=s.name; o.textContent=`${s.name} — from $${s.from}`; $("service").appendChild(o);
+    });
+    const {slots} = await (await fetch(`/api/${CLIENT}/slots`)).json();
+    const box=$("slots");
+    slots.forEach(sl=>{
+      const b=document.createElement("div"); b.className="slot"; b.textContent=sl.label;
+      b.onclick=()=>{ document.querySelectorAll(".slot").forEach(x=>x.classList.remove("on"));
+        b.classList.add("on"); chosen=sl; check(); };
+      box.appendChild(b);
+    });
+  }
+  function check(){
+    $("book").disabled = !(chosen && $("cname").value.trim() && $("phone").value.trim());
+  }
+  ["cname","phone"].forEach(id=>$(id).addEventListener("input",check));
+
+  $("book").onclick=async()=>{
+    $("book").disabled=true; $("book").textContent="Booking…";
+    const r=await (await fetch(`/api/${CLIENT}/book`,{method:"POST",
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({name:$("cname").value.trim(),phone:$("phone").value.trim(),
+        service:$("service").value,slot:chosen.iso,slotLabel:chosen.label})})).json();
+    if(r.ok){
+      $("form").classList.add("hide"); $("done").classList.remove("hide");
+      $("doneMsg").textContent=`${$("service").value} · ${chosen.label}. We've texted ${$("phone").value.trim()} to confirm.`;
+    } else { $("book").disabled=false; $("book").textContent="Confirm booking"; alert(r.error||"Something went wrong"); }
+  };
+  boot();
+</script>
+</body>
+</html>

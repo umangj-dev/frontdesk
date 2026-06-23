@@ -1,0 +1,17 @@
+{
+  "name": "frontdesk-ai",
+  "version": "0.1.0",
+  "description": "Multi-tenant AI front desk that captures and books missed inquiries for high-end local service businesses.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "chat": "FRONTDESK_BRAIN=chat node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

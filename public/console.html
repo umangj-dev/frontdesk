@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FrontDesk AI — Operator Console</title>
+<style>
+  :root{--bg:#0b0d10;--panel:#14171c;--panel2:#0d1014;--line:#232830;--ink:#eef2f5;--mut:#8b95a1;--accent:#19c3a3;--warn:#f2b53b;}
+  *{box-sizing:border-box;}
+  body{margin:0;font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:radial-gradient(1200px 700px at 80% -10%,#11161c,var(--bg));color:var(--ink);min-height:100vh;}
+  header{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;}
+  .brand{font-weight:800;letter-spacing:.14em;color:var(--accent);font-size:13px;}
+  header h1{font-size:17px;margin:0;font-weight:600;}
+  header .pill{margin-left:auto;font-size:12px;color:var(--accent);border:1px solid var(--accent);padding:4px 11px;border-radius:20px;}
+  .wrap{display:grid;grid-template-columns:340px 1fr;gap:24px;padding:24px 28px;max-width:1200px;margin:0 auto;}
+  @media(max-width:880px){.wrap{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:18px;}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:0 0 14px;}
+
+  /* Instruction panel */
+  .steps{counter-reset:s;}
+  .step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+  .step:last-child{border-bottom:0;}
+  .step .n{counter-increment:s;min-width:26px;height:26px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--mut);}
+  .step.active .n{background:var(--accent);color:#04130f;border-color:var(--accent);}
+  .step .n::before{content:counter(s);}
+  .step .t{font-weight:600;}
+  .step .d{color:var(--mut);font-size:13px;margin-top:2px;}
+  .step.done .t::after{content:" ✓";color:var(--accent);}
+
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:560px){.tiles{grid-template-columns:1fr;}}
+  .tile{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:15px;}
+  .tile .top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+  .tile h3{margin:0;font-size:14px;}
+  .tile p{margin:0 0 12px;color:var(--mut);font-size:12.5px;min-height:34px;}
+  .btn{display:inline-block;background:var(--accent);color:#04130f;border:0;border-radius:9px;padding:8px 13px;
+    font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:none;}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);}
+  .row{display:flex;gap:8px;flex-wrap:wrap;}
+  input.sim{flex:1;min-width:120px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:12.5px;}
+  .out{margin-top:10px;font-size:12px;color:var(--accent);background:#0a1512;border:1px solid #143a30;border-radius:8px;padding:9px 11px;white-space:pre-wrap;display:none;}
+
+  .stat{display:flex;gap:26px;}
+  .stat b{display:block;font-size:24px;color:var(--accent);}
+  .stat small{color:var(--mut);font-size:11.5px;}
+  .hint{background:#171206;border:1px solid #3a2e10;color:var(--warn);border-radius:10px;padding:11px 13px;font-size:12.5px;margin-top:6px;}
+
+  details.how{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;}
+  details.how summary{cursor:pointer;color:var(--accent);font-size:12px;font-weight:700;list-style:none;}
+  details.how summary::-webkit-details-marker{display:none;}
+  details.how[open] summary{margin-bottom:8px;}
+  details.how ol{margin:6px 0 10px;padding-left:18px;color:var(--mut);font-size:12px;line-height:1.6;}
+  details.how li{margin-bottom:4px;}
+  details.how code{background:#0a1512;border:1px solid #143a30;color:var(--accent);border-radius:5px;padding:1px 5px;font-size:11px;}
+  .code{background:#0a1512;border:1px solid #143a30;color:var(--accent);border-radius:8px;padding:9px 11px;
+    font-family:ui-monospace,Menlo,monospace;font-size:11px;word-break:break-all;margin-bottom:8px;}
+  .copy{font-size:11.5px;padding:6px 11px;}
+  .bigsteps{margin:0;padding-left:20px;color:var(--mut);font-size:13px;line-height:1.6;}
+  .bigsteps li{margin-bottom:8px;}
+  .bigsteps b{color:var(--ink);}
+  .bigsteps code{background:#0a1512;border:1px solid #143a30;color:var(--accent);border-radius:5px;padding:1px 5px;font-size:11.5px;}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">FRONTDESK AI</span>
+  <h1 id="clientName">Operator Console</h1>
+  <span class="pill" id="brainPill">checking…</span>
+</header>
+
+<div class="wrap">
+  <!-- LEFT: what to do -->
+  <div>
+    <div class="card">
+      <h2>▶ What to do — follow these</h2>
+      <div class="steps" id="steps">
+        <div class="step active" data-k="chat">
+          <div class="n"></div><div>
+            <div class="t">Try the AI chat</div>
+            <div class="d">Open the website widget and ask it a customer question.</div></div>
+        </div>
+        <div class="step" data-k="book">
+          <div class="n"></div><div>
+            <div class="t">See the booking page</div>
+            <div class="d">Open the booking page — real time-slots, pick one, book it.</div></div>
+        </div>
+        <div class="step" data-k="sms">
+          <div class="n"></div><div>
+            <div class="t">Fire a “missed call”</div>
+            <div class="d">Simulate a missed call → watch the auto-text reply (right panel).</div></div>
+        </div>
+        <div class="step" data-k="ig">
+          <div class="n"></div><div>
+            <div class="t">Send an Instagram DM</div>
+            <div class="d">Simulate a DM → see the auto-reply with a booking link.</div></div>
+        </div>
+        <div class="step" data-k="report">
+          <div class="n"></div><div>
+            <div class="t">Check what it recovered</div>
+            <div class="d">Watch the report tally bookings into recovered revenue.</div></div>
+        </div>
+      </div>
+      <div class="hint" id="hint">Tip: every action you take here updates the live report below — this is exactly what a client would see.</div>
+    </div>
+
+    <div class="card">
+      <h2>Recovered revenue (live)</h2>
+      <div class="stat">
+        <div><b id="cap">0</b><small>bookings captured</small></div>
+        <div><b id="rev">$0</b><small>est. recovered</small></div>
+      </div>
+      <div id="byChan" style="margin-top:12px;color:var(--mut);font-size:12px;"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: the live system -->
+  <div>
+    <div class="card">
+      <h2>Channels — your live front desk</h2>
+      <div class="tiles">
+        <div class="tile">
+          <div class="top"><span class="dot"></span><h3>Website chat</h3></div>
+          <p>The AI receptionist on the client's site.</p>
+          <a class="btn" id="openChat" target="_blank">Open chat widget →</a>
+          <details class="how">
+            <summary>⚙ How to set it up live</summary>
+            <ol>
+              <li>Copy the one-line embed code below.</li>
+              <li>Paste it before <code>&lt;/body&gt;</code> on the client's site.</li>
+              <li>WordPress: Header/Footer plugin · Squarespace: Code Injection (Footer) · Wix: Custom Code · Webflow: Footer Code · Shopify: theme.liquid.</li>
+              <li>Done — the chat bubble appears on every page instantly.</li>
+            </ol>
+            <div class="code" id="embedCode">&lt;script src="…/embed.js" data-client="…"&gt;&lt;/script&gt;</div>
+            <button class="btn ghost copy" data-copy="embedCode">Copy embed code</button>
+          </details>
+        </div>
+
+        <div class="tile">
+          <div class="top"><span class="dot"></span><h3>Booking page</h3></div>
+          <p>Real time-slots, instant confirmation.</p>
+          <a class="btn" id="openBook" target="_blank">Open booking page →</a>
+          <details class="how">
+            <summary>⚙ How to set it up live</summary>
+            <ol>
+              <li>Copy the booking link below.</li>
+              <li>Put it in their Instagram bio, Google Business "Book" button, and email signature.</li>
+              <li>Add it as the website's "Book Now" button link.</li>
+              <li>Every visit logs into the recovered-revenue report automatically.</li>
+            </ol>
+            <div class="code" id="bookLink">…/book.html?client=…</div>
+            <button class="btn ghost copy" data-copy="bookLink">Copy booking link</button>
+          </details>
+        </div>
+
+        <div class="tile">
+          <div class="top"><span class="dot"></span><h3>Missed-call → text</h3></div>
+          <p>Caller hits voicemail → gets an instant text back.</p>
+          <div class="row">
+            <input class="sim" id="smsFrom" value="+1 604 555 0123" />
+            <button class="btn" onclick="missedCall()">Simulate call</button>
+          </div>
+          <div class="out" id="smsOut"></div>
+          <details class="how">
+            <summary>⚙ How to set it up live</summary>
+            <ol>
+              <li>Create a free <b>Twilio</b> account, buy a number (~$1/mo).</li>
+              <li>In Twilio, set the number's Messaging webhook to: <code>…/api/CLIENT/sms</code></li>
+              <li>On the client's phone, turn on "forward missed calls" to that Twilio number.</li>
+              <li>Add <code>TWILIO_SID</code>, <code>TWILIO_TOKEN</code>, <code>TWILIO_FROM</code> to your <code>.env</code>.</li>
+              <li>Now every missed call gets an instant AI text back. (Until then it's simulated above.)</li>
+            </ol>
+          </details>
+        </div>
+
+        <div class="tile">
+          <div class="top"><span class="dot"></span><h3>Instagram DM</h3></div>
+          <p>DM auto-reply with a booking link.</p>
+          <div class="row">
+            <input class="sim" id="igText" value="do you do botox? price?" />
+            <button class="btn" onclick="igDM()">Send DM</button>
+          </div>
+          <div class="out" id="igOut"></div>
+          <details class="how">
+            <summary>⚙ How to set it up live</summary>
+            <ol>
+              <li>Client connects their Instagram to a <b>Meta Business</b> account.</li>
+              <li>In Meta Developer, add a webhook pointing to: <code>…/api/CLIENT/instagram</code></li>
+              <li>Verify token: <code>frontdesk-verify</code> (or set <code>IG_VERIFY_TOKEN</code>).</li>
+              <li>Add <code>IG_TOKEN</code> and <code>IG_PAGE_ID</code> to your <code>.env</code>.</li>
+              <li>Now every DM auto-replies with an answer + booking link. (Until then it's simulated above.)</li>
+            </ol>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Going live — the 3 paid pieces (only after a client pays)</h2>
+      <ol class="bigsteps">
+        <li><b>Host it.</b> Deploy to Railway / Render / a $5 VPS so it runs 24/7. One host serves your first ~20 clients.</li>
+        <li><b>Brain on.</b> Add <code>ANTHROPIC_API_KEY</code> to <code>.env</code> for a fully autonomous AI (pennies per chat), or run <code>npm run chat</code> to answer yourself.</li>
+        <li><b>Wire channels.</b> Twilio + Instagram per the tiles above — each takes ~15 min, funded by the client's $750/mo.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CLIENT = new URLSearchParams(location.search).get("client") || "demo-clinic";
+  const $ = (id)=>document.getElementById(id);
+  const done = new Set();
+
+  function markDone(k){
+    done.add(k);
+    document.querySelectorAll(".step").forEach(s=>{
+      if(s.dataset.k===k) s.classList.add("done");
+    });
+    advance();
+  }
+  function advance(){
+    const order=["chat","book","sms","ig","report"];
+    document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+    const next=order.find(k=>!done.has(k));
+    if(next){ document.querySelector(`.step[data-k="${next}"]`).classList.add("active"); }
+    else { $("hint").textContent="✓ You've run every channel. This is the full product a client gets. Next: build the outreach kit and land client #1."; }
+  }
+
+  async function boot(){
+    const cfg=await (await fetch(`/api/${CLIENT}/config`)).json();
+    if(!cfg.error){
+      $("clientName").textContent=cfg.name+" — Operator Console";
+      document.documentElement.style.setProperty("--accent",cfg.brand?.accent||"#19c3a3");
+      document.title=cfg.name+" — Console";
+    }
+    $("openChat").href=`/?client=${CLIENT}`;
+    $("openBook").href=`/book.html?client=${CLIENT}`;
+    $("openChat").onclick=()=>markDone("chat");
+    $("openBook").onclick=()=>markDone("book");
+
+    // Fill the real copy-paste snippets for this client + host.
+    const host=location.origin;
+    $("embedCode").textContent=`<script src="${host}/embed.js" data-client="${CLIENT}" async><\/script>`;
+    $("bookLink").textContent=`${host}/book.html?client=${CLIENT}`;
+    document.querySelectorAll(".copy").forEach(b=>{
+      b.onclick=()=>{
+        navigator.clipboard.writeText($(b.dataset.copy).textContent);
+        const t=b.textContent; b.textContent="Copied ✓";
+        setTimeout(()=>b.textContent=t,1400);
+      };
+    });
+
+    refresh();
+    setInterval(refresh, 4000);
+  }
+
+  async function missedCall(){
+    const from=$("smsFrom").value;
+    await fetch(`/api/${CLIENT}/missed-call`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({from})});
+    const r=await (await fetch(`/api/${CLIENT}/sms`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({From:from,Body:"hi how much is botox"})})).json();
+    const o=$("smsOut"); o.style.display="block";
+    o.textContent="📲 Auto-text sent to caller:\n\n"+r.reply;
+    markDone("sms"); refresh();
+  }
+  async function igDM(){
+    const text=$("igText").value;
+    const r=await (await fetch(`/api/${CLIENT}/instagram`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({sender:"ig_demo",text})})).json();
+    const o=$("igOut"); o.style.display="block";
+    o.textContent="💬 Auto-reply sent in DM:\n\n"+r.reply;
+    markDone("ig"); refresh();
+  }
+  async function refresh(){
+    const r=await (await fetch(`/api/${CLIENT}/report`)).json();
+    $("cap").textContent=r.captured;
+    $("rev").textContent="$"+(r.estimatedRecoveredRevenue||0).toLocaleString();
+    $("byChan").innerHTML=Object.entries(r.byChannel||{}).map(([k,v])=>`${k}: <b style="color:var(--ink)">${v}</b>`).join(" &nbsp;·&nbsp; ")||"No bookings yet — run a channel above.";
+    if(r.captured>0 && done.has("ig")) markDone("report");
+  }
+
+  // Brain mode badge
+  fetch(`/api/brain`).then(r=>r.json()).then(d=>{
+    const map={claude:"Brain: Claude (live)",chat:"Brain: you, in the chat",mock:"Brain: smart mock"};
+    $("brainPill").textContent=map[d.brain]||d.brain;
+  }).catch(()=>{ $("brainPill").textContent="Brain: ready"; });
+  boot();
+</script>
+</body>
+</html>
